@@ -5,10 +5,9 @@ let drawBackground;
 let applyGravity;
 
 const modeC = 3;
-const BOUNCE = 0;
 
 const SPRING_CONSTANT = 0.015;
-const SPRING_LENGTH = 100;
+const SPRING_LENGTH = 50;
 const SPRING_DAMPEN = 0.995;
 
 function setup() {
@@ -17,13 +16,25 @@ function setup() {
   noStroke(); // prettier this way
 
   root = new Orb(width / 2, height / 2, 0, 0, 10);
-  MODE = BOUNCE;
   drawBackground = true;
   applyGravity = true;
 }
 
+function addNewOrb(orb, x, y) {
+  if (orb.left === null) {
+    orb.left = new Orb(x, y);
+    orbList.push(orb.left);
+  } else if (orb.right === null) {
+    orb.right = new Orb(x, y);
+    orbList.push(orb.right);
+  } else {
+    addNewOrb(orb.left, x, y);
+  }
+}
+
 function mouseClicked() {
-  orbList.push(new Orb(mouseX, mouseY, 5, 0, 20));
+  // orbList.push(new Orb(mouseX, mouseY, 5, 0, 20));
+  addNewOrb(root, mouseX, mouseY);
 }
 
 function draw() {
@@ -38,12 +49,7 @@ function draw() {
   }
 
   root.display();
-  for (let o of orbList) {
-    root.attractSpring(o);
-    stroke(0);
-    line(root.x, root.y, o.x, o.y);
-    noStroke();
-  }
+  dothing(root);
 
   for (let o of orbList) {
     for (let k of orbList) {
@@ -54,6 +60,28 @@ function draw() {
   fill(0);
   text(orbList.length, 20, 40);
   text("GRAVITY " + (applyGravity ? "ON" : "OFF"), 20, 80);
+}
+
+function dothing(orb) {
+  if (orb === null) return;
+
+  orb.display();
+
+  if (orb.left) {
+    orb.attractSpring(orb.left);
+    stroke(0);
+    line(orb.x, orb.y, orb.left.x, orb.left.y);
+    noStroke();
+  }
+  if (orb.right) {
+    orb.attractSpring(orb.right);
+    stroke(0);
+    line(orb.x, orb.y, orb.right.x, orb.right.y);
+    noStroke();
+  }
+
+  dothing(orb.left);
+  dothing(orb.right);
 }
 
 function keyPressed() {
@@ -74,7 +102,7 @@ function keyPressed() {
 }
 
 class Orb {
-  constructor(x_, y_, xSpeed_, ySpeed_, radius_) {
+  constructor(x_, y_, xSpeed_=0, ySpeed_=0, radius_=20) {
     this.x = x_;
     this.y = y_;
     this.xSpeed = xSpeed_;
@@ -93,11 +121,6 @@ class Orb {
   }
 
   move() {
-    switch (MODE) {
-      case BOUNCE:
-        this.bounceOnEdge();
-        break;
-    }
 
     if (applyGravity) {
       this.applyGravity();
@@ -105,6 +128,9 @@ class Orb {
 
     this.x += this.xSpeed;
     this.y += this.ySpeed;
+
+    this.xSpeed /= 1.1;
+    this.ySpeed /= 1.1;
   }
 
   attract(other) {
@@ -161,7 +187,7 @@ class Orb {
   }
 
   applyGravity() {
-    const gravity = 0.20;
+    const gravity = 0.50;
     this.ySpeed += gravity;
   }
 }
