@@ -1,12 +1,11 @@
 let orbList;
-let centerOrb;
+let root;
 let MODE;
 let drawBackground;
 let applyGravity;
 
 const modeC = 3;
 const BOUNCE = 0;
-const modeNames = ["BOUNCE", "ORBIT", "SPRING"];
 
 const SPRING_CONSTANT = 0.015;
 const SPRING_LENGTH = 100;
@@ -17,7 +16,7 @@ function setup() {
   orbList = [];
   noStroke(); // prettier this way
 
-  centerOrb = new Orb(width / 2, height / 2, 0, 0, 10);
+  root = new Orb(width / 2, height / 2, 0, 0, 10);
   MODE = BOUNCE;
   drawBackground = true;
   applyGravity = true;
@@ -38,11 +37,11 @@ function draw() {
     //o.drawStick();
   }
 
-  centerOrb.display();
+  root.display();
   for (let o of orbList) {
-    centerOrb.attractSpring(o);
+    root.attractSpring(o);
     stroke(0);
-    line(centerOrb.x, centerOrb.y, o.x, o.y);
+    line(root.x, root.y, o.x, o.y);
     noStroke();
   }
 
@@ -54,7 +53,6 @@ function draw() {
 
   fill(0);
   text(orbList.length, 20, 40);
-  text(modeNames[MODE], 20, 60);
   text("GRAVITY " + (applyGravity ? "ON" : "OFF"), 20, 80);
 }
 
@@ -84,6 +82,9 @@ class Orb {
     this.radius = radius_;
     // random color... why not.
     this.c = color(random(255), random(255), random(255), random(155) + 100);
+
+    this.left = null;
+    this.right = null;
   }
 
   display() {
@@ -164,4 +165,3 @@ class Orb {
     this.ySpeed += gravity;
   }
 }
-
