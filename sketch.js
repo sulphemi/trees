@@ -81,23 +81,6 @@ function dothing(orb) {
   dothing(orb.right);
 }
 
-function keyPressed() {
-//   switch (key) {
-//     case ' ':
-//       MODE = (MODE + 1) % modeC;
-//       break;
-//     case 'b':
-//       drawBackground = !drawBackground;
-//       break;
-//     case 'Backspace':
-//       orbList = []; // frees the arraylist from memory and assigns it a new one
-//       break;
-//     case 'g':
-//       applyGravity = !applyGravity;
-//       break;
-//   }
-}
-
 class Orb {
   constructor(x_, y_, xSpeed_=0, ySpeed_=0, radius_=20) {
     this.x = x_;
