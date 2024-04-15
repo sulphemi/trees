@@ -34,6 +34,20 @@ function addNewOrb(orb, x, y) {
 
 function mouseClicked() {
   // orbList.push(new Orb(mouseX, mouseY, 5, 0, 20));
+  for (let o of orbList) {
+    if (dist(mouseX, mouseY, o.x, o.y) < o.radius) {
+      if (o.left === null) {
+        o.left = new Orb(mouseX, mouseY);
+        orbList.push(o.left);
+        return;
+      }
+      if (o.right === null) {
+        o.right = new Orb(mouseX, mouseY);
+        orbList.push(o.right);
+        return;
+      }
+    }
+  }
   addNewOrb(root, mouseX, mouseY);
 }
 
