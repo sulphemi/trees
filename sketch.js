@@ -7,7 +7,7 @@ let applyGravity;
 const modeC = 3;
 
 const SPRING_CONSTANT = 0.015;
-const SPRING_LENGTH = 50;
+const SPRING_LENGTH = 25;
 const SPRING_DAMPEN = 0.995;
 
 function setup() {
@@ -15,7 +15,7 @@ function setup() {
   orbList = [];
   noStroke(); // prettier this way
 
-  root = new Orb(width / 2, height / 2, 0, 0, 10);
+  root = new Orb(width / 2, height / 8, 0, 0, 10);
   drawBackground = true;
   applyGravity = true;
 }
@@ -42,17 +42,16 @@ function draw() {
     background(255);
   }
 
-  for (let o of orbList) {
-    o.move();
-    o.display();
-    //o.drawStick();
-  }
-
   root.display();
   dothing(root);
 
   for (let o of orbList) {
-    for (let k of orbList) {
+    o.move();
+    o.display();
+  }
+
+  for (let o of orbList) {
+    if (o != root) for (let k of orbList) {
       if (o != k) o.repel(k);
     }
   }
@@ -64,8 +63,6 @@ function draw() {
 
 function dothing(orb) {
   if (orb === null) return;
-
-  orb.display();
 
   if (orb.left) {
     orb.attractSpring(orb.left);
@@ -187,7 +184,15 @@ class Orb {
   }
 
   applyGravity() {
-    const gravity = 0.50;
+    const gravity = 1.0;
     this.ySpeed += gravity;
   }
+}
+
+function stabilize(orb=root) {
+  if (orb === null) return;
+  orb.xSpeed = 0;
+  orb.ySpeed = 0;
+  stabilize(orb.left);
+  stabilize(orb.right);
 }
