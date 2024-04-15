@@ -6,8 +6,6 @@ let applyGravity;
 
 const modeC = 3;
 const BOUNCE = 0;
-const ORBIT = 1;
-const SPRING = 2;
 const modeNames = ["BOUNCE", "ORBIT", "SPRING"];
 
 const SPRING_CONSTANT = 0.015;
@@ -40,22 +38,18 @@ function draw() {
     //o.drawStick();
   }
 
-  switch (MODE) {
-    case ORBIT:
-      centerOrb.display();
-      for (let o of orbList) {
-        centerOrb.attract(o);
-      }
-      break;
-    case SPRING:
-      centerOrb.display();
-      for (let o of orbList) {
-        centerOrb.attractSpring(o);
-        stroke(0);
-        line(centerOrb.x, centerOrb.y, o.x, o.y);
-        noStroke();
-      }
-      break;
+  centerOrb.display();
+  for (let o of orbList) {
+    centerOrb.attractSpring(o);
+    stroke(0);
+    line(centerOrb.x, centerOrb.y, o.x, o.y);
+    noStroke();
+  }
+
+  for (let o of orbList) {
+    for (let k of orbList) {
+      if (o != k) o.repel(k);
+    }
   }
 
   fill(0);
@@ -65,20 +59,20 @@ function draw() {
 }
 
 function keyPressed() {
-  switch (key) {
-    case ' ':
-      MODE = (MODE + 1) % modeC;
-      break;
-    case 'b':
-      drawBackground = !drawBackground;
-      break;
-    case 'Backspace':
-      orbList = []; // frees the arraylist from memory and assigns it a new one
-      break;
-    case 'g':
-      applyGravity = !applyGravity;
-      break;
-  }
+//   switch (key) {
+//     case ' ':
+//       MODE = (MODE + 1) % modeC;
+//       break;
+//     case 'b':
+//       drawBackground = !drawBackground;
+//       break;
+//     case 'Backspace':
+//       orbList = []; // frees the arraylist from memory and assigns it a new one
+//       break;
+//     case 'g':
+//       applyGravity = !applyGravity;
+//       break;
+//   }
 }
 
 class Orb {
@@ -117,6 +111,13 @@ class Orb {
     const d = dist(this.x, this.y, other.x, other.y);
     other.xSpeed += (gConst * (this.x - other.x)) / pow(d, 2);
     other.ySpeed += (gConst * (this.y - other.y)) / pow(d, 2);
+  }
+
+  repel(other) {
+    const gConst = 15.0;
+    const d = dist(this.x, this.y, other.x, other.y);
+    other.xSpeed -= (gConst * (this.x - other.x)) / pow(d, 2);
+    other.ySpeed -= (gConst * (this.y - other.y)) / pow(d, 2);
   }
 
   attractSpring(other) {
